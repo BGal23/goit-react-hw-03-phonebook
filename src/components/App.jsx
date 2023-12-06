@@ -11,6 +11,12 @@ export class App extends Component {
     name: '',
   };
 
+  shouldComponentUpdate(nextProps, nextState) {
+    const addToStorage = JSON.stringify(nextState.contacts);
+    localStorage.setItem('contact', addToStorage);
+    return true;
+  }
+
   addContact = event => {
     event.preventDefault();
     const name = event.currentTarget.children[1].value;
@@ -41,7 +47,7 @@ export class App extends Component {
           person.number.includes(value)) === true
           ? (person.disabled = 'block')
           : (person.disabled = 'none');
-        return person; //tutaj trzeba return (cokolwiek) ale mi w sumie jest niepotrzebny więc dałem zeby sie nie świeciło na zółto
+        return true;
       })
     );
   };
@@ -50,7 +56,6 @@ export class App extends Component {
     const id = event.target.parentElement.id;
     const indexNum = this.state.contacts.findIndex(x => x.id === id);
     this.setState(remove => remove.contacts.splice(indexNum, 1));
-    console.log(id, indexNum);
   };
 
   render() {
@@ -68,5 +73,12 @@ export class App extends Component {
         </ContactList>
       </>
     );
+  }
+
+  componentDidMount() {
+    if (this.state.contacts) {
+      const getToStorage = JSON.parse(localStorage.getItem('contact'));
+      this.setState({ contacts: getToStorage });
+    }
   }
 }
