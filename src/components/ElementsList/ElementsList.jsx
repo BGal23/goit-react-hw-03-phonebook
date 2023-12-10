@@ -5,18 +5,18 @@ export class ElementsList extends Component {
   render() {
     const { person, delateContact } = this.props;
     const list = person.map(contact => (
-      <li
-        style={{ display: contact.disabled }}
-        id={contact.id}
-        key={contact.id}
-      >
+      <li style={{ display: contact.disabled }} key={contact.id}>
         ∙ {contact.name} {contact.number}{' '}
-        <button type="button" onClick={delateContact}>
+        <button type="button" onClick={() => delateContact(contact.id)}>
           Delete
         </button>
       </li>
     ));
-    return <>{list}</>;
+    return (
+      <>
+        <ul>{list}</ul>
+      </>
+    );
   }
 }
 

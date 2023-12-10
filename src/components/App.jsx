@@ -2,7 +2,6 @@ import { Component } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { ContactForm } from './ContactForm/ContactForm';
 import { Filter } from './Filter/Filter';
-import { ContactList } from './ContactList/ContactList';
 import { ElementsList } from './ElementsList/ElementsList';
 
 export class App extends Component {
@@ -11,16 +10,18 @@ export class App extends Component {
     name: '',
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    const addToStorage = JSON.stringify(nextState.contacts);
-    localStorage.setItem('contact', addToStorage);
-    return true;
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.contacts === this.state.contacts) {
+      const addToStorage = JSON.stringify(prevState.contacts);
+      localStorage.setItem('contact', addToStorage);
+      return '';
+    }
   }
 
   addContact = event => {
     event.preventDefault();
-    const name = event.currentTarget.children[1].value;
-    const number = event.currentTarget.children[4].value;
+    const name = event.currentTarget['name'].value;
+    const number = event.currentTarget['number'].value;
     if (this.state.contacts.some(check => check.name === name)) {
       alert(`${name} is already in contacts.`);
     } else if (this.state.contacts.some(check => check.number === number)) {
@@ -35,8 +36,7 @@ export class App extends Component {
         })
       );
     }
-    event.currentTarget.children[1].value = '';
-    event.currentTarget.children[4].value = '';
+    event.currentTarget.reset();
   };
 
   findContact = event => {
@@ -52,8 +52,7 @@ export class App extends Component {
     );
   };
 
-  delateContact = event => {
-    const id = event.target.parentElement.id;
+  delateContact = id => {
     const indexNum = this.state.contacts.findIndex(x => x.id === id);
     this.setState(remove => remove.contacts.splice(indexNum, 1));
   };
@@ -65,19 +64,17 @@ export class App extends Component {
         <ContactForm newContact={this.addContact} />
         <h2>Contact</h2>
         <Filter filter={this.findContact} />
-        <ContactList>
-          <ElementsList
-            person={this.state.contacts}
-            delateContact={this.delateContact}
-          />
-        </ContactList>
+        <ElementsList
+          person={this.state.contacts}
+          delateContact={this.delateContact}
+        />
       </>
     );
   }
 
   componentDidMount() {
     const getToStorage = JSON.parse(localStorage.getItem('contact'));
-    console.log(getToStorage);
+    console.log(getToStorage, 'mount');
     if (getToStorage !== null) {
       this.setState({ contacts: getToStorage });
     }
