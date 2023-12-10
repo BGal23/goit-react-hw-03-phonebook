@@ -8,6 +8,7 @@ export class App extends Component {
   state = {
     contacts: [],
     name: '',
+    filter: '',
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -32,7 +33,6 @@ export class App extends Component {
           id: uuidv4(),
           name: name,
           number: number,
-          disabled: 'block',
         })
       );
     }
@@ -41,15 +41,7 @@ export class App extends Component {
 
   findContact = event => {
     const value = event.target.value.toLowerCase();
-    this.setState(find =>
-      find.contacts.filter(person => {
-        (person.name.toLowerCase().includes(value) ||
-          person.number.includes(value)) === true
-          ? (person.disabled = 'block')
-          : (person.disabled = 'none');
-        return true;
-      })
-    );
+    this.setState({ filter: value });
   };
 
   delateContact = id => {
@@ -63,9 +55,10 @@ export class App extends Component {
         <h2>Phonebook</h2>
         <ContactForm newContact={this.addContact} />
         <h2>Contact</h2>
-        <Filter filter={this.findContact} />
+        <Filter filtered={this.findContact} />
         <ElementsList
-          person={this.state.contacts}
+          persons={this.state.contacts}
+          filter={this.state.filter}
           delateContact={this.delateContact}
         />
       </>
@@ -74,7 +67,6 @@ export class App extends Component {
 
   componentDidMount() {
     const getToStorage = JSON.parse(localStorage.getItem('contact'));
-    console.log(getToStorage, 'mount');
     if (getToStorage !== null) {
       this.setState({ contacts: getToStorage });
     }

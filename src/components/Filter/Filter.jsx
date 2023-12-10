@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 
 export class Filter extends Component {
   render() {
-    const { filter } = this.props;
+    const { filtered } = this.props;
     return (
       <>
         <p>Find contacts by name</p>
-        <input type="text" onChange={filter} />
+        <input type="text" onChange={filtered} />
         <br />
       </>
     );
@@ -15,5 +15,5 @@ export class Filter extends Component {
 }
 
 Filter.propsTypes = {
-  filter: PropTypes.func,
+  filtered: PropTypes.func,
 };
